@@ -16,7 +16,7 @@ from mmdet3d.models import build_model
 from mmdet.apis import multi_gpu_test, set_random_seed
 from mmdet.datasets import replace_ImageToTensor
 
-
+import sys
 def parse_args():
     parser = argparse.ArgumentParser(
         description='MMDet test (and eval) a model')
@@ -135,6 +135,7 @@ def main():
                 for m in _module_dir[1:]:
                     _module_path = _module_path + '.' + m
                 print(_module_path)
+                sys.path.append('/root/autodl-fs/PETR')
                 plg_lib = importlib.import_module(_module_path)
             else:
                 # import dir is the dirpath for the config file
@@ -196,6 +197,7 @@ def main():
     if fp16_cfg is not None:
         wrap_fp16_model(model)
     checkpoint = load_checkpoint(model, args.checkpoint, map_location='cpu')
+    # torch.save(model, 'model_save.pth')
     if args.fuse_conv_bn:
         model = fuse_conv_bn(model)
     # old versions did not save class info in checkpoints, this walkaround is

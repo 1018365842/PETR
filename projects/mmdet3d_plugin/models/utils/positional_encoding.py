@@ -69,7 +69,7 @@ class SinePositionalEncoding3D(BaseModule):
         # `masks` from bool to int.
         mask = mask.to(torch.int)
         not_mask = 1 - mask  # logical_not
-        n_embed = not_mask.cumsum(1, dtype=torch.float32)
+        n_embed = not_mask.cumsum(1, dtype=torch.float32)  #torch.Size([1, 6, 32, 88])
         y_embed = not_mask.cumsum(2, dtype=torch.float32)
         x_embed = not_mask.cumsum(3, dtype=torch.float32)
         if self.normalize:

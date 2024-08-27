@@ -65,7 +65,7 @@ class NMSFreeCoder(BaseBBoxCoder):
         bbox_index = indexs // self.num_classes
         bbox_preds = bbox_preds[bbox_index]
 
-        final_box_preds = denormalize_bbox(bbox_preds, self.pc_range)   
+        final_box_preds = denormalize_bbox(bbox_preds, self.pc_range)   #torch.Size([300, 9])
         final_scores = scores 
         final_preds = labels 
 
@@ -110,8 +110,8 @@ class NMSFreeCoder(BaseBBoxCoder):
         Returns:
             list[dict]: Decoded boxes.
         """
-        all_cls_scores = preds_dicts['all_cls_scores'][-1]
-        all_bbox_preds = preds_dicts['all_bbox_preds'][-1]
+        all_cls_scores = preds_dicts['all_cls_scores'][-1] #torch.Size([1, 900, 10])
+        all_bbox_preds = preds_dicts['all_bbox_preds'][-1] #torch.Size([1, 900, 10])
         
         batch_size = all_cls_scores.size()[0]
         predictions_list = []

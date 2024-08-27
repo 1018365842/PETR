@@ -88,15 +88,15 @@ class PETRTransformer(BaseModule):
                       [bs, embed_dims, h, w].
         """
         bs, n, c, h, w = x.shape
-        memory = x.permute(1, 3, 4, 0, 2).reshape(-1, bs, c) # [bs, n, c, h, w] -> [n*h*w, bs, c]
-        pos_embed = pos_embed.permute(1, 3, 4, 0, 2).reshape(-1, bs, c) # [bs, n, c, h, w] -> [n*h*w, bs, c]
+        memory = x.permute(1, 3, 4, 0, 2).reshape(-1, bs, c) # [bs, n, c, h, w] -> [n*h*w, bs, c] #torch.Size([16896, 1, 256])
+        pos_embed = pos_embed.permute(1, 3, 4, 0, 2).reshape(-1, bs, c) # [bs, n, c, h, w] -> [n*h*w, bs, c] #torch.Size([16896, 1, 256])
         query_embed = query_embed.unsqueeze(1).repeat(
-            1, bs, 1)  # [num_query, dim] -> [num_query, bs, dim]
+            1, bs, 1)  # [num_query, dim] -> [num_query, bs, dim]  #torch.Size([900, 1, 256])
         mask = mask.view(bs, -1)  # [bs, n, h, w] -> [bs, n*h*w]
-        target = torch.zeros_like(query_embed)
+        target = torch.zeros_like(query_embed)  #torch.Size([900, 1, 256])
 
         # out_dec: [num_layers, num_query, bs, dim]
-        out_dec = self.decoder(
+        out_dec = self.decoder(  #torch.Size([6, 900, 1, 256]) 6层decoder
             query=target,
             key=memory,
             value=memory,
@@ -105,7 +105,7 @@ class PETRTransformer(BaseModule):
             key_padding_mask=mask,
             reg_branch=reg_branch,
             )
-        out_dec = out_dec.transpose(1, 2)
+        out_dec = out_dec.transpose(1, 2) #torch.Size([6, 1, 900, 256])
         memory = memory.reshape(n, h, w, bs, c).permute(3, 0, 4, 1, 2)
         return  out_dec, memory
 

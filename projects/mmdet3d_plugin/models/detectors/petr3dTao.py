@@ -23,8 +23,8 @@ from projects.mmdet3d_plugin.models.utils.grid_mask import GridMask
 
 
 @DETECTORS.register_module()
-class Petr3D(MVXTwoStageDetector):
-    """Petr3D."""
+class Petr3DTao(MVXTwoStageDetector):
+    """Petr3DTao."""
 
     def __init__(self,
                  use_grid_mask=False,
@@ -42,7 +42,7 @@ class Petr3D(MVXTwoStageDetector):
                  train_cfg=None,
                  test_cfg=None,
                  pretrained=None):
-        super(Petr3D, self).__init__(pts_voxel_layer, pts_voxel_encoder,
+        super(Petr3DTao, self).__init__(pts_voxel_layer, pts_voxel_encoder,
                              pts_middle_encoder, pts_fusion_layer,
                              img_backbone, pts_backbone, img_neck, pts_neck,
                              pts_bbox_head, img_roi_head, img_rpn_head,
@@ -115,7 +115,21 @@ class Petr3D(MVXTwoStageDetector):
         return losses
 
     @force_fp32(apply_to=('img', 'points'))
-    def forward(self, return_loss=True, **kwargs):
+    # def forward(self, return_loss=True, **kwargs):
+    #     """Calls either forward_train or forward_test depending on whether
+    #     return_loss=True.
+    #     Note this setting will change the expected inputs. When
+    #     `return_loss=True`, img and img_metas are single-nested (i.e.
+    #     torch.Tensor and list[dict]), and when `resturn_loss=False`, img and
+    #     img_metas should be double nested (i.e.  list[torch.Tensor],
+    #     list[list[dict]]), with the outer list indicating test time
+    #     augmentations.
+    #     """
+    #     if return_loss:
+    #         return self.forward_train(**kwargs)
+    #     else:
+    #         return self.forward_test(**kwargs)
+    def forward(self,  **kwargs):
         """Calls either forward_train or forward_test depending on whether
         return_loss=True.
         Note this setting will change the expected inputs. When
@@ -125,10 +139,10 @@ class Petr3D(MVXTwoStageDetector):
         list[list[dict]]), with the outer list indicating test time
         augmentations.
         """
-        if return_loss:
-            return self.forward_train(**kwargs)
-        else:
-            return self.forward_test(**kwargs)
+        # if return_loss:
+        #     return self.forward_train(**kwargs)
+        # else:
+        return self.forward_test(**kwargs)
 
     def forward_train(self,
                       points=None,
